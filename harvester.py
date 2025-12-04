@@ -1,17 +1,23 @@
 import navigation
+import field_monitor
 import planter
 
 
 def harvest_one(cord_x=None, cord_y=None):
-	if cord_x == None and cord_y == None:
+	if cord_x == None or cord_y == None:
 		pass
 	else:
 		navigation.go_to_wp(cord_x, cord_y)
 	
-	if (not can_harvest()) and (not Entities.Dead_Pumpkin):
+	if get_entity_type() == Entities.Sunflower:
 		while not can_harvest():
 			pass
-	harvest()
+			
+	if can_harvest():
+		harvest()
+		
+	field_monitor.record_plot_status()
+			
 			
 def harvest_all_sunflowers():
 	for num_petals in range(15,6,-1):
@@ -25,15 +31,11 @@ def harvest_all_sunflowers():
 
 
 def harvest_all():
-	if get_entity_type() == Entities.Sunflower:
-		harvest_all_sunflowers()
-	else:
-		for i in range(get_world_size()):
-			for j in range(get_world_size()):
-				if can_harvest():
-					harvest()
-				move(East)
-			move(North)
+	navigation.traverse(harvest_one)
+
 
 if __name__ == "__main__":
 	harvest_all()
+	for plot_num in field_monitor.field_status:
+		quick_print(plot_num, field_monitor.field_status[plot_num])
+		quick_print("\n")

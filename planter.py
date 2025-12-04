@@ -3,7 +3,7 @@ import field_monitor
 	
 sunflower_list = {}
 
-def plant_one(crop_type):
+def plant_one(crop_type, cord_x=None, cord_y=None):
 	if crop_type == Entities.Grass:
 		if get_ground_type() != Grounds.Grassland:
 			till()
@@ -65,4 +65,4 @@ def plant_all(crop_type):
 			navigation.go_to_wp(0,0)
 
 if __name__ == "__main__":
-	plant_all(Entities.Grass)
+	plant_all(Entities.Carrot)

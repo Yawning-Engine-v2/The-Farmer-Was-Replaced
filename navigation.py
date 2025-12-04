@@ -1,11 +1,14 @@
+
+world_size = get_world_size()
+world_size_half = world_size//2
+	
+	
 def move_n_blocks(direction, n):
 	for i in range(n):
 		move(direction)
 	
+	
 def get_shortest_move(cord, axis):
-	world_size = get_world_size()
-	world_size_half = world_size//2
-		
 	if axis == "x":
 		direction_pos = East
 		direction_neg = West
@@ -48,6 +51,15 @@ def go_to_wp(cord_x=None, cord_y=None):
 	
 	dir_y, blocks_y = get_shortest_move(cord_y, "y")
 	move_n_blocks(dir_y, blocks_y)
+	
+
+def traverse(do_action):
+	go_to_wp(0,0)
+	for y in range(world_size):
+		for x in range(world_size):
+			do_action()
+			move(East)
+		move(North)
 	
 
 if __name__ == "__main__":
