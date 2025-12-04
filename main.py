@@ -6,7 +6,7 @@ import navigation
 
 iterations = 10
 yield = 2
-crop_list = [Entities.Grass, Entities.Grass,Entities.Bush,Entities.Tree,Entities.Carrot,Entities.Carrot]
+crop_list = [Entities.Grass,Entities.Grass,Entities.Tree,Entities.Tree,Entities.Carrot,Entities.Carrot]
 clear()
 
 while iterations >0 :

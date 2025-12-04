@@ -3,12 +3,7 @@ import field_monitor
 import planter
 
 
-def harvest_one(cord_x=None, cord_y=None):
-	if cord_x == None or cord_y == None:
-		pass
-	else:
-		navigation.go_to_wp(cord_x, cord_y)
-	
+def harvest_one():
 	if get_entity_type() == Entities.Sunflower:
 		while not can_harvest():
 			pass
@@ -17,17 +12,24 @@ def harvest_one(cord_x=None, cord_y=None):
 		harvest()
 		
 	field_monitor.record_plot_status()
+	
+
+def harvest_one_at(cord_x=None, cord_y=None):
+	if cord_x == None or cord_y == None:
+		pass
+	else:
+		navigation.go_to_wp(cord_x, cord_y)
+	harvest_one()
 			
 			
 def harvest_all_sunflowers():
 	for num_petals in range(15,6,-1):
-		while len(planter.sunflower_list[num_petals]) > 0:
-			quick_print("PETALS:", num_petals, "COUNT:",len(planter.sunflower_list[num_petals]))
-			cord_x = planter.sunflower_list[num_petals][0][0]
-			cord_y = planter.sunflower_list[num_petals][0][1]
-			quick_print("CORD:",cord_x, cord_y)
-			harvest_one(cord_x, cord_y)
-			planter.sunflower_list[num_petals].pop(0)
+		petal_list = field_monitor.sunflower_petals_list[num_petals]
+		while len(petal_list) > 0:
+			cord_x = petal_list[0][0]
+			cord_y = petal_list[0][1]
+			harvest_one_at(cord_x, cord_y)
+			petal_list.pop(0)
 
 
 def harvest_all():

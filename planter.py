@@ -1,14 +1,13 @@
 import navigation	
 import field_monitor
 	
-sunflower_list = {}
 
-def plant_one(crop_type, cord_x=None, cord_y=None):
+def plant_one(crop_type):
 	if crop_type == Entities.Grass:
 		if get_ground_type() != Grounds.Grassland:
 			till()
-	# add support for trees as well here
-	elif crop_type == Entities.Bush or crop_type == Entities.Tree:
+			
+	elif crop_type == Entities.Tree:
 		if get_pos_y()%2 == 0:
 			if get_pos_x()%2 == 0:
 				plant(Entities.Tree)
@@ -20,6 +19,9 @@ def plant_one(crop_type, cord_x=None, cord_y=None):
 			else:
 				plant(Entities.Tree)
 	
+	elif crop_type == Entities.Bush:
+		plant(Entities.Bush)
+		
 	elif crop_type == Entities.Carrot:
 		if get_ground_type() != Grounds.Soil:
 			till()
@@ -34,35 +36,38 @@ def plant_one(crop_type, cord_x=None, cord_y=None):
 		if get_ground_type() != Grounds.Soil:
 			till()
 		plant(Entities.Sunflower)
-		sunflower_pos = (get_pos_x(),get_pos_y())
-		if measure() in sunflower_list: 
-			sunflower_list[measure()].append(sunflower_pos)
-		else:
-			sunflower_list[measure()] = [sunflower_pos]
-		#quick_print(sunflower_pos)
+	
+	field_monitor.record_plot_status()
+
+
+def plant_one_wrapper(crop_type):
+	def action():
+		plant_one(crop_type)
+	return action
+	
+
+def plant_one_at(crop_type, cord_x=None, cord_y=None):
+	if cord_x == None or cord_y == None:
+		pass
+	else:
+		navigation.go_to_wp(cord_x, cord_y)
+	plant_one(crop_type)
+
 
 def plant_many(crop_type, cords):
 	for cord in cords:
-		navigation.go_to_wp(cord[0], cord[1])
-		plant_one(crop_type)	
-		
-			
+		plant_one_at(cords[0], cords[1])
+	
+	
 def plant_all(crop_type):
-	if crop_type == Entities.Grass:
-		clear()
-		while not can_harvest():
-			continue
-	else:		
-		for i in range(get_world_size()):
-			for j in range(get_world_size()):
-				plant_one(crop_type)
-				
-				move(East)
-			move(North)
-		if crop_type == Entities.Pumpkin:
-			dead_pumpkin_cords = field_monitor.get_dead_pumpkins()
-			plant_many(Entities.Pumpkin ,dead_pumpkin_cords)
-			navigation.go_to_wp(0,0)
+	wrapped_plant_one = plant_one_wrapper(crop_type) 
+	navigation.traverse(wrapped_plant_one)
+	
+	if crop_type == Entities.Pumpkin:
+		dead_pumpkin_cords = field_monitor.get_dead_pumpkins()
+		plant_many(Entities.Pumpkin ,dead_pumpkin_cords)
+		navigation.go_to_wp(0,0)
+
 
 if __name__ == "__main__":
 	plant_all(Entities.Carrot)
