@@ -32,8 +32,27 @@ def harvest_all_sunflowers():
 			petal_list.pop(0)
 
 
-def harvest_all():
-	navigation.traverse(harvest_one)
+def harvest_all_pumpkins():
+	field_monitor.record_field_status()
+	while len(field_monitor.dead_pumpkins_list) > 0:
+		dead_pumpkin_list = field_monitor.dead_pumpkins_list[:]
+		for cord_x, cord_y in dead_pumpkin_list:
+			navigation.go_to_wp(cord_x, cord_y)
+			if can_harvest() == False:
+				if get_entity_type() == Entities.Dead_Pumpkin: 
+					planter.plant_one(Entities.Pumpkin)
+			else:
+				field_monitor.dead_pumpkins_list.remove([cord_x, cord_y])
+	harvest()
+				
+
+def harvest_all(crop_type = None):
+	if crop_type == None:
+		navigation.traverse(harvest_one)
+	elif crop_type == Entities.Sunflower:
+		harvest_all_sunflowers()
+	elif crop_type == Entities.Pumpkin:
+		harvest_all_pumpkins()
 
 
 if __name__ == "__main__":
